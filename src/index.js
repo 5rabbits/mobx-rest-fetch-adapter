@@ -16,15 +16,15 @@ type Options = {
 }
 
 export function ajaxOptions (options: Options): any {
-  const headers = new Headers(Object.assign({}, {
+  const { headers, data, ...otherOptions } = options
+  const headersObject = new Headers(Object.assign({}, {
     'Content-Type': 'application/json'
-  }, options.headers))
+  }, headers))
 
   return {
-    ...options,
-    method: options.method,
-    headers,
-    body: options.data ? JSON.stringify(options.data) : null
+    ...otherOptions,
+    headers: headersObject,
+    body: data ? JSON.stringify(data) : null
   }
 }
 
@@ -41,7 +41,11 @@ function ajax (url: string, options: Options): OptionsRequest {
   }
   const request = new Request(url, ajaxOptions(options))
   const xhr = fetch(request)
+  let rejectPromise
+
   const promise = new Promise((resolve, reject) => {
+    rejectPromise = reject
+
     xhr.then(checkStatus).then(resolve, (error) => {
       const ret = error ? error.errors : {}
 
@@ -49,7 +53,7 @@ function ajax (url: string, options: Options): OptionsRequest {
     })
   })
 
-  const abort = () => {} // noop, fetch is not cancelable
+  const abort = () => rejectPromise('abort')
 
   return { abort, promise }
 }

@@ -19,6 +19,9 @@
       "expect",
       "Class",
       "jest"
+    ],
+    "ignore": [
+      "lib/index.js"
     ]
   },
   "devDependencies": {

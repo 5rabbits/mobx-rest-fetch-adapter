@@ -14,8 +14,7 @@ type Options = {
   method: Method,
   headers?: ?{ [key: string]: string },
   onProgress?: (num: number) => mixed,
-  data?: ?{ [key: string]: mixed },
-  qsOptions?: ?{ [key: mixed]: mixed }
+  data?: ?{ [key: string]: mixed }
 }
 
 export function ajaxOptions (options: Options): any {
@@ -53,7 +52,7 @@ function ajax (url: string, options: Options): OptionsRequest {
   let rejectPromise
 
   if (options.method === 'GET' && options.data) {
-    url = `${url}?${qs.stringify(options.data, options.qsOptions)}`
+    url = `${url}?${qs.stringify(options.data)}`
     delete options.data
   }
 
